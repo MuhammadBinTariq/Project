@@ -1,31 +1,39 @@
 #include <iostream>
-#include <iomanip>
-#include <stdlib.h>
-#include "color_console.hpp"
 
 using namespace std;
 
+void initializeBoard(int* elements, int boardSize) {
+
+    for(int i {0}; i < boardSize; i += 2) {
+
+        *(elements + i) = (i + 1);
+        cout << *(elements + i) << " ";
+        *(elements + i + 1) = *(elements + i);
+        cout << *(elements + i + 1) << " ";
+
+    }
+
+    cout << "\n";
+
+    for(int i {0}; i < 4; i++) {
+
+        for(int j {0}; j < 4; j++) {
+
+            cout << *((elements + (i * 4)) + j) << " ";
+
+        }
+
+        cout << "\n";
+
+    }
+
+}
+
 int main() {
 
-    cout << console.get("Hello", { console.red, console.bold, console.bg_cyan }) << endl;
-    console.print("world", { console.red, console.underline });
-    console.print("world", { console.blink });
-    console.print("world empty", {});
+    int cardElements[64];
+    initializeBoard(cardElements, 16);
 
-    console.log("hello world!, log");
-    console.info("hello world!, info");
-    console.warn("hello world!, warning");
-    console.error("hello world!, error");
-    console.debug("hello world!, debug");
-
-    console.set_log({ console.magenta, console.bold, console.bg_dark_gray });
-    console.log("hello world!, after set_log, log");
-    console.reset_log();
-    console.log("hello world!, after reset_log, log");
-
-    console.set_info({console.light_cyan, console.underline});
-    console.info("hello world!, after set_info, info");
-    console.reset_all();
-    console.info("hello world!, after reset_all, info");
+    return 0;
 
 }
