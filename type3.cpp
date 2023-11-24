@@ -1,20 +1,37 @@
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
+#include <cmath>
+#include <ctime>
 #include "color_console.hpp"
 
 using namespace std;
 
+// Declaration of all constants
+const int MAX_SIZE_OF_BOARD {64};
+
+// Declaration of all called functions
 void playerMenu();
 bool gameRules();
+void initializeBoard(int* elements, int boardSize);
+int gameDifficulty();
+void fillBoardArray(int* elements, int dimensions);
+void randomIndexSwaps(int* elements, int indexLimit);
 
+/* Program Officially Starts */
+
+// Displays user menu
 void playerMenu() {
 
     int userChoice {0};
+    int cardElements[MAX_SIZE_OF_BOARD];
+    int sizeOfBoard {0};
+
+    fillBoardArray(cardElements, MAX_SIZE_OF_BOARD);
 
     cout << "\n" << setfill('*') << setw(95) << "*\n";
 
-    cout << "\n\t\t\t\t\b\b" << console.get("Welcome to Memoir - The Card Game!", { console.blue, console.bold, console.underline });
+    cout << "\n\t\t\t\t\b\b" << console.get("Welcome to Memoir - The Card Game!", { console.green, console.bold, console.underline });
 
     cout << "\n\t _____\t\t\t\t\t\t\t\t\t_____";
     cout << "\n\t|A .  | _____\t\t\t\t\t\t\t _____ |  . A|";
@@ -32,7 +49,7 @@ void playerMenu() {
     
     do {
 
-        cout << console.get("\n\t\t\t\tEnter the corresponding number: ", { console.red });
+        cout << console.get("\n\t\t\t\tEnter the corresponding number: ", { console.white });
         cin >> userChoice;
 
     }while(userChoice != 1 && userChoice != 2 && userChoice != 3 && userChoice != 19);
@@ -43,7 +60,9 @@ void playerMenu() {
 
         case 1:
             
-            // Calls difficulty & Board game
+            sizeOfBoard = gameDifficulty();
+            randomIndexSwaps(cardElements, sizeOfBoard * sizeOfBoard);
+            initializeBoard(cardElements, sizeOfBoard);
             break;
 
         case 2:
@@ -51,7 +70,9 @@ void playerMenu() {
             if(gameRules()) {
 
                 system("CLS");
-                // Calls difficulty & Board game
+                sizeOfBoard = gameDifficulty();
+                randomIndexSwaps(cardElements, sizeOfBoard * sizeOfBoard);
+                initializeBoard(cardElements, sizeOfBoard);
 
             }
             else {
@@ -65,6 +86,7 @@ void playerMenu() {
 
         case 3:
 
+            return;
             break;
 
         case 19:
@@ -76,6 +98,50 @@ void playerMenu() {
 
 }
 
+// Determines game mode difficulty
+int gameDifficulty() {
+
+    int difficultyChosen {0};
+
+    cout << "\n" << setfill('*') << setw(95) << "*\n";
+    cout << "\n\t\t\t\t\t\b\b\b" << console.get("Select Difficulty:\n", { console.blue, console.bold, console.underline });
+    cout << "\n\n\t\t\t\t\t\b\b\b" << console.get("1. Easy 4x4 Game\n", { console.green });
+    cout << "\n\t\t\t\t\t\b\b\b" << console.get("2. Medium 6x6 Game\n", { console.green });
+    cout << "\n\t\t\t\t\t\b\b\b" << console.get("3. Hard 8x8 Game\n", { console.green });
+    
+    do {
+
+        cout << console.get("\n\t\t\t\tEnter the corresponding number: ", { console.white });
+        cin >> difficultyChosen;
+
+    }while(difficultyChosen != 1 && difficultyChosen != 2 && difficultyChosen != 3);
+
+    switch(difficultyChosen) {
+
+        case 1:
+
+            difficultyChosen = 4;
+            break;
+
+        case 2:
+
+            difficultyChosen = 6;
+            break;
+
+        case 3:
+
+            difficultyChosen = 8;
+            break;
+
+    }
+
+    system("CLS");
+
+    return difficultyChosen;
+
+}
+
+// Displays game rules for a first time player
 bool gameRules() {
 
     int input {0};
@@ -110,12 +176,132 @@ bool gameRules() {
 
 }
 
-void initializeBoard() {
+// Prepares and displays the board
+void initializeBoard(int* elements, int boardSize) {
 
-    
+    cout << "\n";
+
+    for(int i {1}; i <= boardSize; i++) {
+
+        if(i == 1) {
+
+            cout << "\t\b" << i;
+
+        }
+        else {
+
+            cout << "           " << i;
+
+        }
+
+    }
+
+    cout << "\n";
+
+    for (int i {0}; i < boardSize; i++) {
+        
+        for (int j {0}; j < boardSize; j++) {
+            
+            cout << "   +------+ ";
+        
+        }
+
+        cout << '\n';
+
+        for (int j {0}; j < boardSize; j++) {
+            
+            cout << "   |      | ";
+        
+        }
+
+        cout << "\n";
+
+        for (int j = 0; j < boardSize; j++) {
+            
+            cout << "   |      | ";
+        
+        }
+
+        cout << '\n';
+
+        for (int j {0}; j < boardSize; j++) {
+            
+            if(j == 0) {
+
+                cout << " " << i + 1;
+
+            }
+            else {
+
+                cout << "  ";
+
+            }
+
+            cout << " |  " << setw(2) << setfill(' ') << *((elements + (i * boardSize)) + j) << "  | ";
+        
+        }
+
+        cout << '\n';
+
+        for (int j = 0; j < boardSize; j++) {
+            
+            cout << "   |      | ";
+        
+        }
+
+        cout << "\n";
+
+        for (int j = 0; j < boardSize; j++) {
+            
+            cout << "   |      | ";
+        
+        }
+
+        cout << '\n';
+
+        for (int j = 0; j < boardSize; j++) {
+            
+            cout << "   +------+ ";
+        
+        }
+
+        cout << '\n';
+    }
 
 }
 
+// Fills the board according to the difficulty selected
+void fillBoardArray(int* elements, int dimensions) {
+
+    for(int i {0}; i < dimensions; i += 2) {
+
+        *(elements + i) = (i + 1);
+        *(elements + i + 1) = *(elements + i);
+
+    }
+
+}
+
+// Randomly shuffles the elements of the board game
+void randomIndexSwaps(int* elements, int indexLimit) {
+
+    int temporaryValue {0};
+    int randomIndex {0};
+
+    srand(time(0));
+
+    for(int i{0}; i < indexLimit; i++) {
+
+        temporaryValue = *(elements + i);
+        randomIndex = rand() % indexLimit;
+        *(elements + i) = *(elements + randomIndex);
+        *(elements + randomIndex) = temporaryValue;
+
+    }
+
+}
+
+// ehe good ol' main
 int main() {
 
     playerMenu();
