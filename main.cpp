@@ -4,6 +4,7 @@
 #include <cmath>
 #include <ctime>
 
+#include <Windows.h>
 #include <fstream>
 
 #include "color_console.hpp"
@@ -272,10 +273,10 @@ void initializeBoard(string* elements, bool* card_state, int boardSize)
         boardPrinter(elements, card_state, boardSize);
         for(int i = 0; i < 2; i++)
         {
-
             match[i] = userInput(card_state, boardSize);
             boardPrinter(elements, card_state, boardSize);
         }
+        
         if(elements[match[0]]==elements[match[1]])
         {
             match_count++;
@@ -285,14 +286,14 @@ void initializeBoard(string* elements, bool* card_state, int boardSize)
             card_state[match[0]] = false;
             card_state[match[1]] = false;
         }
+        
         if(match_count==(boardSize*boardSize/2))
         {
             game_state = false;
         }
-        
+        Sleep(5000);
+        system("CLS"); 
     }
-
-    
 }
 
 
