@@ -5,8 +5,9 @@
 using namespace std;
 
 const int MAX_PLAYERS = 100;
-int current_players;
 string players[MAX_PLAYERS][2];
+
+int current_players;
 
 void readScores() 
 {
@@ -22,8 +23,6 @@ void readScores()
     file.close();
 
 }
-
-/*THE FOLLOWING SHOULD ONLY BE USED AFTER THE FILE HAS BEEN READ*/
 
 void displayScores() 
 {
@@ -66,7 +65,7 @@ void updateScores(string name, string score)
     file.close();
 }
 
-int main() 
+/* int main() 
 {
     readScores();
 
@@ -81,4 +80,4 @@ int main()
     }
 
     return 0;
-}
+} */
