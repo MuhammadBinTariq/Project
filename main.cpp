@@ -15,8 +15,8 @@ using namespace std;
 
 
 // Declaration of all constant
-bool card_state[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-string array_four[16] = {"A","A","B","B","C","C","D","D","E","E","F","F","G","G","H","H" };
+bool card_state[64] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+string array_four[64] = {"A","A","B","B","C","C","D","D","E","E","F","F","G","G","H","H","I","I","J","J","K","K","L","L","M","M","N","N","O","O","P","P","Q","Q","R","R","S","S","T","T","U","U","V","V","W","W","X","X","Y","Y","Z","Z","!","!","@","@","#","#","$","$","%","%","&","&"};
 
 
 
@@ -102,12 +102,12 @@ void displayScores()
     
 }
 
-void updateScores(string name, string score) 
+void updateScores(string name, int score) 
 {
     readScores();
 
     players[current_players][0] = name;
-    players[current_players][1] = score;
+    players[current_players][1] = to_string(score);
 
     current_players++;
 
@@ -151,7 +151,7 @@ void randomIndexSwaps(string* elements, int indexLimit) {
 
 }
 
-void boardPrinter(string* elements, bool* state, int boardSize) 
+void boardPrinter(string* elements, bool* state, int boardSize, int score, int streak) 
 {
 
     cout << "\n";
@@ -240,6 +240,9 @@ void boardPrinter(string* elements, bool* state, int boardSize)
         cout << '\n';
     }
 
+    cout << "\n\nScore: " << score << endl;
+    cout << "Streak: x" << streak-1 << endl;
+
 }
 
 int userInput(bool* state, int boardSize)
@@ -264,36 +267,75 @@ void initializeBoard(string* elements, bool* card_state, int boardSize)
 {
     bool game_state = true;
     int match_count = 0;
-    int match[2];
+    int streak_history = 1;
+    int current_match[2];
+
+    string player_name;
+    int player_score = 100;
 
     randomIndexSwaps(elements, boardSize*boardSize);
 
+    for(int i=0;i<64;i++)
+    {
+        cout<<*(elements+i);
+        if((i+1)%8==0)
+        {
+            cout << "\n";
+        }
+    }
+
+    cout << "\nEnter your name:";
+    cin >> player_name;
+
+
     while (game_state)
     {
-        boardPrinter(elements, card_state, boardSize);
+        system("CLS");
+        boardPrinter(elements, card_state, boardSize, player_score, streak_history);
         for(int i = 0; i < 2; i++)
         {
-            match[i] = userInput(card_state, boardSize);
-            boardPrinter(elements, card_state, boardSize);
+            current_match[i] = userInput(card_state, boardSize);
+            system("CLS");
+            boardPrinter(elements, card_state, boardSize, player_score, streak_history);
         }
         
-        if(elements[match[0]]==elements[match[1]])
+        if(elements[current_match[0]]==elements[current_match[1]])
         {
             match_count++;
+            streak_history += 1;
+            player_score += 5*streak_history;
         }
         else
         {
-            card_state[match[0]] = false;
-            card_state[match[1]] = false;
+            card_state[current_match[0]] = false;
+            card_state[current_match[1]] = false;
+            streak_history = 1;
+            player_score -= 1;
         }
         
         if(match_count==(boardSize*boardSize/2))
         {
+            updateScores(player_name, player_score);
             game_state = false;
+            designPrinter();
+            cout << "\t\t\t\t\t\t Game won!";
+            Sleep(5000);
+            break;
         }
+        else if(player_score < 0)
+        {
+            updateScores(player_name, player_score);
+            game_state = false;
+            designPrinter();
+            cout << "\t\t\t\t\t\t Game lost!";
+            Sleep(5000);
+            break;
+        }
+        
         Sleep(5000);
         system("CLS"); 
     }
+    system("CLS"); 
 }
 
 
@@ -318,7 +360,8 @@ void playerMenu() {
 
     cout << "\n\n\t\t\t\t\t\b\b\b" << console.get("1. New Game\n", { console.green });
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("2. Rules of Memoir\n", { console.green });
-    cout << "\n\t\t\t\t\t\b\b\b" << console.get("3. Quit Game\n", { console.green });
+    cout << "\n\t\t\t\t\t\b\b\b" << console.get("3. Leaderboard\n", { console.green });
+    cout << "\n\t\t\t\t\t\b\b\b" << console.get("4. Quit Game\n", { console.green });
     
     do {
 
@@ -354,8 +397,11 @@ void playerMenu() {
             }
 
             break;
-
+        
         case 3:
+            system("CLS");
+            displayScores();
+        case 4:
 
             return;
             break;
@@ -452,8 +498,7 @@ bool gameRules() {
 // ehe good ol' main
 int main() {
 
-    /* playerMenu(); */
-    initializeBoard(array_four, card_state, 4);
+    playerMenu();
 
     return 0;
 
