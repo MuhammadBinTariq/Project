@@ -275,15 +275,6 @@ void initializeBoard(string* elements, bool* card_state, int boardSize)
 
     randomIndexSwaps(elements, boardSize*boardSize);
 
-    for(int i=0;i<64;i++)
-    {
-        cout<<*(elements+i);
-        if((i+1)%8==0)
-        {
-            cout << "\n";
-        }
-    }
-
     cout << "\nEnter your name:";
     cin >> player_name;
 
