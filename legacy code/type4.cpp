@@ -3,36 +3,41 @@
 #include <stdlib.h>
 #include <cmath>
 #include <ctime>
+
 #include <Windows.h>
 #include <fstream>
+
 #include "color_console.hpp"
 
 using namespace std;
 
+
+
+
 // Declaration of all constant
-const int MAX_PLAYERS = 100;
-string players[MAX_PLAYERS][2];
 bool card_state[64] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 string array_four[64] = {"A","A","B","B","C","C","D","D","E","E","F","F","G","G","H","H","I","I","J","J","K","K","L","L","M","M","N","N","O","O","P","P","Q","Q","R","R","S","S","T","T","U","U","V","V","W","W","X","X","Y","Y","Z","Z","!","!","@","@","#","#","$","$","%","%","&","&"};
-int current_players;
+
+
+
+
 
 // Declaration of all called functions
-void displayScores();
-void readScores();
-void updateScores();
-void designPrinter();
 void playerMenu();
 bool gameRules();
 int gameDifficulty();
 void initializeBoard(int* elements, int boardSize);
 void randomIndexSwaps(int* elements, int indexLimit);
 
+
+
+
 /*
     DECORATIONS
 */
 
-void designPrinter() {
-
+void designPrinter()
+{
     cout << "\n\t _____\t\t\t\t\t\t\t\t\t_____";
     cout << "\n\t|A .  | _____\t\t\t\t\t\t\t _____ |  . A|";
     cout << "\n\t| /.\\ ||A ^  | _____\t\t\t\t\t  _____ |  ^ A|| /.\\ |";
@@ -42,15 +47,23 @@ void designPrinter() {
     cout << "\n\t\t\b|____V||  |  || \\ / |\t\t\t  | \\ / ||  |  ||V____|";
     cout << "\n\t\t\t\b\b|____V||  .  |\t\t\t  |  .  ||V____|";
     cout << "\n\t\t\t\t\b\b\b|____V|\t\t\t  |V____|\n\n";
-
 }
+
+
+
+
 
 /*
     Highscore
 */
 
-void readScores() {
-    
+const int MAX_PLAYERS = 100;
+string players[MAX_PLAYERS][2];
+
+int current_players;
+
+void readScores() 
+{
     ifstream file("scores.txt");
 
     file >> current_players;
@@ -64,10 +77,11 @@ void readScores() {
 
 }
 
-void displayScores() {
-    
+void displayScores() 
+{
     readScores();
     designPrinter();
+
 
     for (int i = 0; i < current_players-1; i++) 
     {     
@@ -88,8 +102,8 @@ void displayScores() {
     
 }
 
-void updateScores(string name, int score) {
-    
+void updateScores(string name, int score) 
+{
     readScores();
 
     players[current_players][0] = name;
@@ -107,8 +121,11 @@ void updateScores(string name, int score) {
     }
 
     file.close();
-
 }
+
+
+
+
 
 /*
     Board
@@ -119,6 +136,7 @@ void randomIndexSwaps(string* elements, int indexLimit) {
 
     string temporaryValue {""};
     int randomIndex {0};
+
 
     srand(time(0));
 
@@ -133,7 +151,8 @@ void randomIndexSwaps(string* elements, int indexLimit) {
 
 }
 
-void boardPrinter(string* elements, bool* state, int boardSize, int score, int streak) {
+void boardPrinter(string* elements, bool* state, int boardSize, int score, int streak) 
+{
 
     cout << "\n";
 
@@ -170,14 +189,15 @@ void boardPrinter(string* elements, bool* state, int boardSize, int score, int s
         
         }
 
+
         cout << '\n';
 
         for (int j {0}; j < boardSize; j++) {
             
             if(j == 0) {
 
-                int y = i + 1;
-                cout << " " << y ;
+                char c = 'A'+i;
+                cout << " " << c ;
 
             }
             else {
@@ -208,6 +228,7 @@ void boardPrinter(string* elements, bool* state, int boardSize, int score, int s
         
         }
 
+
         cout << '\n';
 
         for (int j = 0; j < boardSize; j++) {
@@ -217,7 +238,6 @@ void boardPrinter(string* elements, bool* state, int boardSize, int score, int s
         }
 
         cout << '\n';
-
     }
 
     cout << "\n\nScore: " << score << endl;
@@ -225,134 +245,44 @@ void boardPrinter(string* elements, bool* state, int boardSize, int score, int s
 
 }
 
-int userInput(bool* state, int boardSize) {
-    
-    string coords_x;
-    string coords_y;
-    bool cardStateFlag {true};
+int userInput(bool* state, int boardSize)
+{
+    int coords_x;
+    char coords_y;
 
-    // Input Validation
-    while(cardStateFlag) {
+    cout << "\n\nEnter the x coordinates: ";
+    cin >> coords_x;
+    cout << "\n\nEnter the y coordinates: ";
+    cin >> coords_y;
 
-        while (true) {
+    coords_y = toupper(coords_y);
 
-            cout << console.get("\n\nEnter the x coordinates: ", { console.white });
-            cin >> coords_x;
+    *((card_state + ( (coords_y-'A')* boardSize)) + (coords_x-1)) = true;
 
-            if(coords_x != "1" && coords_x != "2" && coords_x != "3" && coords_x != "4" && coords_x != "5" && coords_x != "6" &&
-            coords_x != "7" && coords_x != "8") {
-
-                coords_x = " ";
-                cout << console.get("\n\nInvalid Input.\n", { console.red });
-                continue;
-
-            }
-            else if(stoi(coords_x) <= boardSize) {
-
-                break;
-
-            }
-            else {
-
-                coords_x = " ";
-                cout << console.get("\n\nInvalid Input.\n", { console.red });
-                continue;
-
-            }
-
-        }
-
-        while (true) {
-
-            cout << console.get("\n\nEnter the y coordinates: ", { console.white });
-            cin >> coords_y;
-
-            if(coords_y != "1" && coords_y != "2" && coords_y != "3" && coords_y != "4" && coords_y != "5" && coords_y != "6" &&
-            coords_y != "7" && coords_y != "8") {
-
-                coords_y = " ";
-                cout << console.get("\n\nInvalid Input.\n", { console.red });
-                continue;
-
-            }
-            else if(stoi(coords_y) <= boardSize) {
-
-                break;
-
-            }
-            else {
-
-                coords_y = " ";
-                cout << console.get("\n\nInvalid Input.\n", { console.red });
-                continue;
-
-            }
-
-        }
-
-        if(!(*((card_state + ((stoi(coords_y) - 1) * boardSize)) + (stoi(coords_x) - 1)))) {
-
-            cardStateFlag = false;
-
-        }
-        else {
-
-            cout << console.get("\n\nCard is revealed.\n", { console.red });
-
-        }
-    
-    }
-
-    *((card_state + ((stoi(coords_y) - 1) * boardSize)) + (stoi(coords_x) - 1)) = true;
-
-    return  ((stoi(coords_y) - 1) * boardSize + (stoi(coords_x) - 1));
-
+    return  ((coords_y-'A')* boardSize + (coords_x-1));
 }
 
 // Prepares and displays the board
-void initializeBoard(string* elements, bool* card_state, int boardSize) {
-    
+void initializeBoard(string* elements, bool* card_state, int boardSize) 
+{
     bool game_state = true;
     int match_count = 0;
     int streak_history = 1;
     int current_match[2];
-    int spaceCheck {0};
 
     string player_name;
     int player_score = 100;
 
     randomIndexSwaps(elements, boardSize*boardSize);
 
-    cout << "\nEnter your first name: ";
-    cin.ignore(1000, '\n');
-    getline(cin, player_name);
+    cout << "\nEnter your name:";
+    cin >> player_name;
 
-    // Input Validation
-    while(true) {
 
-        if(player_name[spaceCheck] == ' ') {
-
-            cout << console.get("\nInvalid Input.\n", { console.red });
-            cout << "\nEnter your first name: ";
-            getline(cin, player_name);
-            spaceCheck = 0;
-
-        }
-        else if(spaceCheck == player_name.length()) {
-
-            break;
-
-        }
-
-        spaceCheck++;
-
-    }
-
-    while (game_state) {
-        
+    while (game_state)
+    {
         system("CLS");
         boardPrinter(elements, card_state, boardSize, player_score, streak_history);
-
         for(int i = 0; i < 2; i++)
         {
             current_match[i] = userInput(card_state, boardSize);
@@ -394,13 +324,14 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
         }
         
         Sleep(5000);
-        system("CLS");
-        
+        system("CLS"); 
     }
-
     system("CLS"); 
-
 }
+
+
+
+
 
 /* 
     MENU ELEMENTS
@@ -409,7 +340,7 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
 // Displays user menu
 void playerMenu() {
 
-    string userChoice {" "};
+    int userChoice {0};
     int sizeOfBoard {0};
 
     cout << "\n" << setfill('*') << setw(95) << "*\n";
@@ -422,31 +353,17 @@ void playerMenu() {
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("2. Rules of Memoir\n", { console.green });
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("3. Leaderboard\n", { console.green });
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("4. Quit Game\n", { console.green });
-
-    // Input Validation
-    while (true) {
+    
+    do {
 
         cout << console.get("\n\t\t\t\tEnter the corresponding number: ", { console.white });
         cin >> userChoice;
 
-        if(userChoice != "1" && userChoice != "2" && userChoice != "3" && userChoice != "4" && userChoice != "19") {
-
-            userChoice = " ";
-            cout << console.get("\n\t\t\t\tInvalid Input.\n", { console.red });
-            continue;
-
-        }
-        else {
-
-            break;
-
-        }
-
-    }
+    }while(userChoice != 1 && userChoice != 2 && userChoice != 3 && userChoice != 19);
 
     system("CLS");
 
-    switch(stoi(userChoice)) {
+    switch(userChoice) {
 
         case 1:
             
@@ -494,7 +411,7 @@ void playerMenu() {
 // Determines game mode difficulty
 int gameDifficulty() {
 
-    string difficultyChosen {" "};
+    int difficultyChosen {0};
 
     cout << "\n" << setfill('*') << setw(95) << "*\n";
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("Select Difficulty:\n", { console.blue, console.bold, console.underline });
@@ -502,55 +419,42 @@ int gameDifficulty() {
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("2. Medium 6x6 Game\n", { console.green });
     cout << "\n\t\t\t\t\t\b\b\b" << console.get("3. Hard 8x8 Game\n", { console.green });
     
-    while (true) {
+    do {
 
         cout << console.get("\n\t\t\t\tEnter the corresponding number: ", { console.white });
         cin >> difficultyChosen;
 
-        if(difficultyChosen != "1" && difficultyChosen != "2" && difficultyChosen != "3") {
+    }while(difficultyChosen != 1 && difficultyChosen != 2 && difficultyChosen != 3);
 
-            difficultyChosen = " ";
-            cout << console.get("\n\t\t\t\tInvalid Input.\n", { console.red });
-            continue;
-
-        }
-        else {
-
-            break;
-
-        }
-
-    }
-
-    switch(stoi(difficultyChosen)) {
+    switch(difficultyChosen) {
 
         case 1:
 
-            difficultyChosen = "4";
+            difficultyChosen = 4;
             break;
 
         case 2:
 
-            difficultyChosen = "6";
+            difficultyChosen = 6;
             break;
 
         case 3:
 
-            difficultyChosen = "8";
+            difficultyChosen = 8;
             break;
 
     }
 
     system("CLS");
 
-    return stoi(difficultyChosen);
+    return difficultyChosen;
 
 }
 
 // Displays game rules for a first time player
 bool gameRules() {
 
-    string input {0};
+    int input {0};
 
     cout << "\n" << setfill('*') << setw(95) << "*\n";
 
@@ -567,29 +471,15 @@ bool gameRules() {
     cout << "\t \3 The game continues until all pairs have been matched\n";
 
     cout << "\nDo you have what it takes to imprint your mark in the Memoir? The key to success is your memory...\n";
+    
+    do{
 
-    // Input Validation
-    while (true) {
-
-        cout << console.get("\nEnter (1) to begin Memoir, or (0) to return to menu: ", { console.white });
+        cout << "\nEnter (1) to begin Memoir, or (0) to return to menu: ";
         cin >> input;
 
-        if(input != "1" && input != "0") {
+    }while(input != 0 && input != 1);
 
-            input = " ";
-            cout << console.get("\n\t\t\t\tInvalid Input.\n", { console.red });
-            continue;
-
-        }
-        else {
-
-            break;
-
-        }
-
-    }
-
-    if(stoi(input))
+    if(input)
         return true;
     
     return false;
