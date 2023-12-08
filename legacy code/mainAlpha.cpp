@@ -69,14 +69,14 @@ void displayScores() {
     readScores();
     designPrinter();
 
-    for (int i = 0; i < current_players - 1; i++) 
+    for (int i = 0; i < current_players-1; i++) 
     {     
-        for (int j = 0; j < current_players - i - 1; j++) 
+        for (int j = 0; j < current_players-i-1; j++) 
         { 
-            if (stoi(players[j][1]) < stoi(players[j + 1][1])) 
+            if (stoi(players[j][1]) < stoi(players[j+1][1])) 
             {
-                swap(players[j][0], players[j + 1][0]);
-                swap(players[j][1], players[j + 1][1]);
+                swap(players[j][0], players[j+1][0]);
+                swap(players[j][1], players[j+1][1]);
             }
         }
     } 
@@ -336,7 +336,6 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
             cout << "\nEnter your first name: ";
             getline(cin, player_name);
             spaceCheck = 0;
-            continue;
 
         }
         else if(spaceCheck == player_name.length()) {
@@ -365,7 +364,7 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
         {
             match_count++;
             streak_history += 1;
-            player_score += 5 * streak_history;
+            player_score += 5*streak_history;
         }
         else
         {
@@ -375,12 +374,12 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
             player_score -= 1;
         }
         
-        if(match_count == (boardSize * boardSize / 2))
+        if(match_count==(boardSize*boardSize/2))
         {
             updateScores(player_name, player_score);
             game_state = false;
             designPrinter();
-            cout << "\n\t\t\t\t\b\b" << console.get("You conquered Memoir!", { console.green, console.bold, console.underline });
+            cout << "\t\t\t\t\t\t Game won!";
             Sleep(5000);
             break;
         }
@@ -389,7 +388,7 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
             updateScores(player_name, player_score);
             game_state = false;
             designPrinter();
-            cout << "\n\t\t\t\t\b\b" << console.get("Fare well next time!", { console.green, console.bold, console.underline });
+            cout << "\t\t\t\t\t\t Game lost!";
             Sleep(5000);
             break;
         }
@@ -399,7 +398,7 @@ void initializeBoard(string* elements, bool* card_state, int boardSize) {
         
     }
 
-    system("CLS");
+    system("CLS"); 
 
 }
 
@@ -477,10 +476,6 @@ void playerMenu() {
         
             system("CLS");
             displayScores();
-            Sleep(5000);
-            system("CLS");
-            playerMenu();
-            break;
         
         case 4:
 
@@ -601,50 +596,12 @@ bool gameRules() {
 
 }
 
+
+
 // ehe good ol' main
 int main() {
 
-    bool playAgain {true};
-
-    while (playAgain) {
-        
-        playerMenu();
-
-        // Ask the user if they want to play again
-        string input;
-        
-        while (true) {
-
-            cout << console.get("\nWould you like to play Memoir again?\n", { console.white });
-            cout << console.get("\nEnter (1) to go to Menu, or (0) to quit: ", { console.white });
-            cin >> input;
-
-            if(input != "1" && input != "0") {
-
-                input = " ";
-                cout << console.get("\n\t\t\t\tInvalid Input.\n", { console.red });
-                continue;
-
-            }
-            else {
-
-                break;
-
-            }
-
-        }
-
-        if (!stoi(input)) {
-            
-            playAgain = false;
-            cout << console.get("\nMay you conquer more!\n", { console.green });
-            Sleep(3000);
-
-        }
-
-        system("CLS");
-
-    }
+    playerMenu();
 
     return 0;
 
